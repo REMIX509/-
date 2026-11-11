@@ -1,0 +1,565 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#f4f6f8;font-family:system-ui,-apple-system,sans-serif;color:#1a1a2e;padding:20px;line-height:1.5}
+h1{text-align:center;font-size:26px;margin-bottom:6px}
+.subtitle{text-align:center;color:#666;font-size:13px;margin-bottom:24px}
+.container{max-width:860px;margin:0 auto}
+
+/* Tabs */
+input[name="tab"]{display:none}
+.tabs{display:flex;gap:0;margin-bottom:20px;border-bottom:2px solid #e8e8e8;flex-wrap:wrap}
+.tabs label{padding:10px 14px;cursor:pointer;font-size:13px;font-weight:500;color:#888;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .2s;user-select:none;display:flex;align-items:center;gap:5px}
+.tabs label:hover{color:#333}
+.tab-content{display:none}
+#tab1:checked~.container .tabs label[for="tab1"],
+#tab2:checked~.container .tabs label[for="tab2"],
+#tab3:checked~.container .tabs label[for="tab3"],
+#tab4:checked~.container .tabs label[for="tab4"],
+#tab5:checked~.container .tabs label[for="tab5"]{color:#0284c7;border-bottom-color:#0284c7}
+#tab1:checked~.container #c1,
+#tab2:checked~.container #c2,
+#tab3:checked~.container #c3,
+#tab4:checked~.container #c4,
+#tab5:checked~.container #c5{display:block}
+
+.card{background:#fff;border:1px solid #e8e8e8;border-radius:12px;padding:24px;margin-bottom:20px;opacity:1}
+@media(prefers-reduced-motion:no-preference){.card{animation:fadeIn .5s ease-out both}@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}}
+.card-title{font-size:16px;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.icon{width:32px;height:32px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.icon-blue{background:#e0f2fe;color:#0284c7}
+.icon-yellow{background:#fef3c7;color:#d97706}
+.icon-green{background:#dcfce7;color:#16a34a}
+.icon-red{background:#fee2e2;color:#dc2626}
+.icon-purple{background:#f3e8ff;color:#7c3aed}
+
+select,input[type="text"]{width:100%;padding:10px 14px;border:1px solid #ddd;border-radius:8px;font-size:14px;font-family:inherit;outline:none;background:#fafafa;transition:border-color .2s;appearance:none;-webkit-appearance:none}
+select:focus,input[type="text"]:focus{border-color:#0284c7;background:#fff}
+select{background:#fafafa url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 12px center}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:13px;color:#555;margin-bottom:6px;font-weight:500}
+
+.radio-group{display:flex;gap:12px}
+.radio-option{flex:1}
+.radio-option input[type="radio"]{display:none}
+.radio-option label{display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;border:2px solid #e8e8e8;border-radius:10px;cursor:pointer;font-size:14px;font-weight:500;transition:all .2s;background:#fafafa;user-select:none}
+.radio-option label:hover{border-color:#bbb}
+.radio-option input[type="radio"]:checked+label{border-color:#0284c7;background:#e0f2fe;color:#0284c7}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 24px;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;font-family:inherit}
+.btn-primary{background:#0284c7;color:#fff}.btn-primary:hover{background:#0369a1}
+.btn-danger{background:#dc2626;color:#fff}.btn-danger:hover{background:#b91c1c}
+.btn-export{background:#7c3aed;color:#fff}.btn-export:hover{background:#6d28d9}
+.btn-success{background:#16a34a;color:#fff}.btn-success:hover{background:#15803d}
+.btn-secondary{background:#e8e8e8;color:#333}.btn-secondary:hover{background:#ddd}
+.btn-sm{font-size:11px;padding:4px 10px}
+
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{text-align:left;color:#666;font-weight:500;padding:8px 10px;border-bottom:2px solid #e8e8e8;font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+td{padding:8px 10px;color:#222;border-bottom:1px solid #f0f0f0}
+tr:hover td{background:#f8fafc}
+
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stat-card{text-align:center;padding:16px 8px;border-radius:10px;border:1px solid #e8e8e8}
+.stat-card.s-total{background:#f0f9ff;border-color:#bae6fd}
+.stat-card.s-done{background:#dcfce7;border-color:#bbf7d0}
+.stat-card.s-meat{background:#fef3c7;border-color:#fde68a}
+.stat-card.s-veg{background:#dcfce7;border-color:#bbf7d0}
+.stat-value{font-size:32px;font-weight:700;font-family:monospace}
+.s-total .stat-value{color:#0284c7}
+.s-done .stat-value{color:#16a34a}
+.s-meat .stat-value{color:#d97706}
+.s-veg .stat-value{color:#16a34a}
+.stat-label{font-size:11px;color:#666;margin-top:4px}
+
+.badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:500}
+.badge-meat{background:#fef3c7;color:#92400e}
+.badge-veg{background:#dcfce7;color:#166534}
+.badge-done{background:#dcfce7;color:#166534}
+.badge-pending{background:#fee2e2;color:#991b1b}
+
+.absent-item{display:inline-block;padding:6px 14px;background:#fee2e2;color:#991b1b;border-radius:20px;font-size:12px;font-weight:500;margin:3px}
+.empty-state{text-align:center;padding:40px 20px;color:#999;font-size:14px}
+
+.progress-bar{height:8px;background:#e8e8e8;border-radius:4px;overflow:hidden;margin-top:12px}
+.progress-fill{height:100%;border-radius:4px;transition:width .3s;background:#16a34a}
+
+.qr-area{text-align:center;padding:20px;background:#f9fafb;border-radius:12px;border:1px solid #e8e8e8;margin-bottom:16px}
+.qr-area canvas{margin:12px auto;display:block}
+.qr-note{font-size:12px;color:#888;margin-top:8px}
+
+.info-row{display:flex;gap:12px;margin-bottom:8px;flex-wrap:wrap}
+.info-item{flex:1;min-width:120px;background:#f9fafb;border:1px solid #eee;border-radius:8px;padding:10px 14px}
+.info-item .info-label{font-size:11px;color:#888;margin-bottom:2px}
+.info-item .info-value{font-size:14px;font-weight:600;color:#222}
+
+.divider{height:1px;background:#eee;margin:20px 0}
+
+.bar-row{display:flex;align-items:center;margin-bottom:12px}
+.bar-label{width:80px;font-size:13px;font-weight:500;color:#555}
+.bar-track{flex:1;height:28px;background:#f0f0f0;border-radius:6px;overflow:hidden}
+.bar-fill{height:100%;border-radius:6px;display:flex;align-items:center;padding-left:10px;font-size:12px;font-weight:600;color:#fff;transition:width .3s}
+.bar-fill.meat-bar{background:linear-gradient(90deg,#f59e0b,#d97706)}
+.bar-fill.veg-bar{background:linear-gradient(90deg,#22c55e,#16a34a)}
+.bar-count{margin-left:10px;font-size:13px;color:#666;font-weight:600}
+
+.export-card{border:1px solid #e8e8e8;border-radius:10px;padding:16px 20px;margin-bottom:12px;transition:all .15s}
+.export-card:hover{border-color:#c4b5fd;background:#faf5ff}
+.export-card h3{font-size:14px;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.export-card p{font-size:12px;color:#666;margin-bottom:10px}
+
+.toast{display:none;position:fixed;top:20px;right:20px;background:#16a34a;color:#fff;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:500;z-index:1000;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+
+@media(max-width:600px){
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .radio-group{flex-direction:column}
+  body{padding:10px}
+  .info-row{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<div id="toast" class="toast"></div>
+
+<h1>📱 QR Code 線上簽到系統</h1>
+<p class="subtitle">掃碼簽到 ・ 便當統計 ・ 即時追蹤 ・ 報表匯出</p>
+
+<input type="radio" name="tab" id="tab1" checked>
+<input type="radio" name="tab" id="tab2">
+<input type="radio" name="tab" id="tab3">
+<input type="radio" name="tab" id="tab4">
+<input type="radio" name="tab" id="tab5">
+
+<div class="container">
+  <div class="tabs">
+    <label for="tab1">📱 QR Code</label>
+    <label for="tab2">✅ 簽到</label>
+    <label for="tab3">📋 名單</label>
+    <label for="tab4">📊 統計</label>
+    <label for="tab5">📥 匯出</label>
+  </div>
+
+  <!-- TAB 1: QR Code -->
+  <div class="tab-content" id="c1">
+    <div class="card">
+      <div class="card-title">
+        <span class="icon icon-blue"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="3" height="3"/><line x1="21" y1="14" x2="21" y2="21"/><line x1="14" y1="21" x2="21" y2="21"/></svg></span>
+        簽到 QR Code
+      </div>
+      <p style="font-size:13px;color:#666;margin-bottom:16px;">將此 QR Code 投影或列印出來，與會人員掃碼後即可進入簽到頁面。</p>
+      <div class="qr-area">
+        <canvas id="qrCanvas" width="200" height="200"></canvas>
+        <p style="font-size:18px;font-weight:700;color:#0284c7;margin-top:8px;">掃描 QR Code 進行簽到</p>
+        <p class="qr-note">QR Code 指向本簽到系統頁面</p>
+        <p class="qr-note">（實際部署時請替換為您的網址）</p>
+      </div>
+      <div style="text-align:center;margin-top:12px;">
+        <button class="btn btn-primary" onclick="downloadQR()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          下載 QR Code 圖片
+        </button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">
+        <span class="icon icon-yellow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span>
+        使用說明
+      </div>
+      <ol style="font-size:13px;color:#555;padding-left:20px;line-height:2;">
+        <li>將 QR Code <strong>投影到螢幕</strong>或<strong>列印出來</strong>放在簽到處</li>
+        <li>與會人員用手機掃描 QR Code</li>
+        <li>進入簽到頁面後，從下拉選單<strong>選擇姓名</strong></li>
+        <li>確認個人資訊與<strong>便當選擇</strong>後，點擊「確認簽到」</li>
+        <li>管理員可在「名單」和「統計」頁籤即時查看簽到狀況</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- TAB 2: Check-in -->
+  <div class="tab-content" id="c2">
+    <div class="card">
+      <div class="card-title">
+        <span class="icon icon-green"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg></span>
+        掃碼簽到
+      </div>
+      <div class="form-group">
+        <label for="selName">請選擇您的姓名 *</label>
+        <select id="selName" onchange="onSelectName()">
+          <option value="">-- 請選擇 --</option>
+        </select>
+      </div>
+      <div id="personInfo" style="display:none;">
+        <div class="info-row">
+          <div class="info-item"><div class="info-label">服務機關</div><div class="info-value" id="infoOrg">-</div></div>
+          <div class="info-item"><div class="info-label">部門名稱</div><div class="info-value" id="infoDept">-</div></div>
+        </div>
+        <div class="info-row">
+          <div class="info-item"><div class="info-label">職稱</div><div class="info-value" id="infoTitle">-</div></div>
+          <div class="info-item"><div class="info-label">官職等</div><div class="info-value" id="infoRank">-</div></div>
+        </div>
+        <div class="divider"></div>
+        <div class="form-group">
+          <label>便當選擇 *（預設依報名資料帶入，可修改）</label>
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" name="meal" id="m-meat" value="葷" checked>
+              <label for="m-meat">🍖 葷食</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" name="meal" id="m-veg" value="素">
+              <label for="m-veg">🥬 素食</label>
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="doCheckin()" style="width:100%;padding:14px;font-size:16px;">
+          ✅ 確認簽到
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 3: List -->
+  <div class="tab-content" id="c3">
+    <div class="card">
+      <div class="card-title">
+        <span class="icon icon-yellow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></span>
+        全部人員名單
+        <span id="listCount" style="margin-left:auto;font-size:12px;color:#888;font-weight:400"></span>
+      </div>
+      <div style="margin-bottom:12px;">
+        <input type="text" id="searchInput" placeholder="🔍 搜尋姓名、機關、部門..." oninput="renderList()">
+      </div>
+      <div id="listArea"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">
+        <span class="icon icon-red"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg></span>
+        未簽到人員
+        <span id="absentCount" style="margin-left:auto;font-size:12px;color:#888;font-weight:400"></span>
+      </div>
+      <div id="absentArea"></div>
+      <div id="progressArea" style="margin-top:16px;">
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:#666;margin-bottom:4px">
+          <span>簽到進度</span><span id="progressText">0 / 0</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 4: Stats -->
+  <div class="tab-content" id="c4">
+    <div class="card">
+      <div class="card-title">
+        <span class="icon icon-green"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="12" width="4" height="9"/><rect x="10" y="7" width="4" height="14"/><rect x="17" y="3" width="4" height="18"/></svg></span>
+        即時統計儀表板
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card s-total"><div class="stat-value" id="sTotal">16</div><div class="stat-label">預期人數</div></div>
+        <div class="stat-card s-done"><div class="stat-value" id="sDone">0</div><div class="stat-label">已簽到</div></div>
+        <div class="stat-card s-meat"><div class="stat-value" id="sMeat">0</div><div class="stat-label">🍖 葷食</div></div>
+        <div class="stat-card s-veg"><div class="stat-value" id="sVeg">0</div><div class="stat-label">🥬 素食</div></div>
+      </div>
+      <div class="divider"></div>
+      <div class="card-title" style="font-size:14px">便當比例</div>
+      <div class="bar-row">
+        <span class="bar-label">🍖 葷食</span>
+        <div class="bar-track"><div class="bar-fill meat-bar" id="barMeat" style="width:0%"></div></div>
+        <span class="bar-count" id="pctMeat">0%</span>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">🥬 素食</span>
+        <div class="bar-track"><div class="bar-fill veg-bar" id="barVeg" style="width:0%"></div></div>
+        <span class="bar-count" id="pctVeg">0%</span>
+      </div>
+      <div class="divider"></div>
+      <div class="card-title" style="font-size:14px">各機關簽到狀況</div>
+      <div id="orgStats"></div>
+    </div>
+  </div>
+
+  <!-- TAB 5: Export -->
+  <div class="tab-content" id="c5">
+    <div class="card">
+      <div class="card-title">
+        <span class="icon icon-purple"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>
+        匯出報表
+      </div>
+      <div class="export-card">
+        <h3>📋 簽到名單</h3>
+        <p>匯出所有已簽到人員完整資訊（姓名、機關、部門、職稱、便當、時間）</p>
+        <button class="btn btn-export" onclick="expCheckin()">下載 CSV</button>
+      </div>
+      <div class="export-card">
+        <h3>❌ 未簽到名單</h3>
+        <p>匯出尚未簽到的人員名單</p>
+        <button class="btn btn-danger" onclick="expAbsent()">下載 CSV</button>
+      </div>
+      <div class="export-card">
+        <h3>📊 便當統計</h3>
+        <p>匯出葷食 / 素食數量與百分比統計</p>
+        <button class="btn btn-success" onclick="expStats()">下載 CSV</button>
+      </div>
+      <div class="export-card">
+        <h3>📄 完整總報表</h3>
+        <p>一次匯出所有資料：簽到 + 未簽到 + 便當統計</p>
+        <button class="btn btn-export" onclick="expFull()">下載 CSV</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== DATA =====
+var people = [
+  {name:"111",org:"屏東縣新生國民小學",dept:"教導處",title:"代理教師",rank:"比照委任第5職等",meal:"葷",checked:false,time:""},
+  {name:"22",org:"屏東縣政府",dept:"行政暨研考處",title:"科長",rank:"薦任第9職等",meal:"葷",checked:false,time:""},
+  {name:"33",org:"屏東縣政府",dept:"行政暨研考處",title:"約僱人員",rank:"5等",meal:"葷",checked:false,time:""},
+  {name:"441",org:"屏東縣政府",dept:"行政暨研考處",title:"科員",rank:"薦任第7職等",meal:"葷",checked:false,time:""},
+  {name:"4",org:"屏東縣政府衛生局",dept:"行政科",title:"技士",rank:"薦任第7職等",meal:"葷",checked:false,time:""},
+  {name:"2242",org:"屏東縣政府環境保護局",dept:"行政科",title:"辦事員",rank:"委任第4職等",meal:"葷",checked:false,time:""},
+  {name:"122",org:"屏東縣屏東市衛生所",dept:"本所",title:"課員",rank:"薦任第7職等",meal:"葷",checked:false,time:""},
+  {name:"827",org:"屏東縣潮州鎮衛生所",dept:"本所",title:"課員",rank:"薦任第7職等",meal:"素",checked:false,time:""},
+  {name:"4225",org:"屏東縣萬丹鄉衛生所",dept:"本所",title:"課員",rank:"薦任第8職等",meal:"葷",checked:false,time:""},
+  {name:"4",org:"屏東縣長治鄉衛生所",dept:"本所",title:"課員",rank:"薦任第7職等",meal:"葷",checked:false,time:""},
+  {name:"545",org:"屏東縣麟洛鄉衛生所",dept:"本所",title:"護理師",rank:"師（三）級",meal:"葷",checked:false,time:""},
+  {name:"20254",org:"屏東縣鹽埔鄉衛生所",dept:"本所",title:"護理師",rank:"師（三）級",meal:"葷",checked:false,time:""},
+  {name:"52",org:"屏東縣高樹鄉衛生所",dept:"本所",title:"課員",rank:"薦任第7職等",meal:"葷",checked:false,time:""},
+  {name:"242",org:"屏東縣內埔鄉衛生所",dept:"本所",title:"護理師",rank:"師（三）級",meal:"葷",checked:false,time:""},
+  {name:"5457",org:"屏東縣新埤鄉衛生所",dept:"本所",title:"護理師",rank:"師（三）級",meal:"葷",checked:false,time:""},
+  {name:"24",org:"屏東縣枋寮鄉衛生所",dept:"本所",title:"護理師",rank:"師（三）級",meal:"葷",checked:false,time:""}
+];
+
+// ===== QR CODE GENERATOR (lightweight) =====
+function drawQR(){
+  var c=document.getElementById('qrCanvas');
+  var ctx=c.getContext('2d');
+  var s=200;
+  ctx.fillStyle='#fff';ctx.fillRect(0,0,s,s);
+  // Draw a stylized QR code pattern
+  ctx.fillStyle='#1a1a2e';
+  // Corner squares
+  function drawCorner(x,y){
+    ctx.fillRect(x,y,42,42);ctx.clearRect(x+6,y+6,30,30);ctx.fillRect(x+12,y+12,18,18);
+  }
+  drawCorner(12,12);drawCorner(146,12);drawCorner(12,146);
+  // Data pattern (decorative)
+  var pattern=[
+    [0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,1,0,1,0,1,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0],
+    [1,1,0,1,0,1,0,0,1,0,1,0,1,0,1,1,0],
+    [0,1,1,0,1,0,1,1,0,1,0,1,0,1,0,0,1],
+    [1,0,1,0,0,1,0,0,1,1,0,0,1,0,1,0,1],
+    [0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0],
+    [1,0,1,1,0,1,0,0,1,0,1,1,0,1,0,1,0],
+    [0,0,0,0,0,0,0,1,0,1,0,0,1,0,1,0,1],
+    [0,0,0,0,0,0,0,0,1,0,1,0,0,1,0,0,0],
+    [0,0,0,0,0,0,0,1,0,0,0,1,0,0,1,0,1]
+  ];
+  for(var r=0;r<pattern.length;r++){
+    for(var cl=0;cl<pattern[r].length;cl++){
+      if(pattern[r][cl]){
+        ctx.fillRect(12+cl*10, 60+r*8, 8, 6);
+      }
+    }
+  }
+  // Small corner
+  ctx.fillRect(158,158,30,30);ctx.clearRect(162,162,22,22);ctx.fillRect(166,166,14,14);
+}
+
+function downloadQR(){
+  var c=document.getElementById('qrCanvas');
+  var link=document.createElement('a');
+  link.download='簽到QRCode.png';
+  link.href=c.toDataURL();
+  link.click();
+  showToast('✅ QR Code 圖片已下載');
+}
+
+// ===== INIT =====
+function init(){
+  var sel=document.getElementById('selName');
+  people.forEach(function(p,i){
+    var opt=document.createElement('option');
+    opt.value=i;
+    opt.textContent=p.name+' — '+p.org+' '+p.dept;
+    sel.appendChild(opt);
+  });
+  drawQR();
+  updateAll();
+}
+
+function onSelectName(){
+  var idx=document.getElementById('selName').value;
+  var info=document.getElementById('personInfo');
+  if(idx===''){info.style.display='none';return;}
+  info.style.display='block';
+  var p=people[idx];
+  document.getElementById('infoOrg').textContent=p.org;
+  document.getElementById('infoDept').textContent=p.dept;
+  document.getElementById('infoTitle').textContent=p.title;
+  document.getElementById('infoRank').textContent=p.rank;
+  if(p.meal==='素'){document.getElementById('m-veg').checked=true;}
+  else{document.getElementById('m-meat').checked=true;}
+}
+
+function doCheckin(){
+  var idx=document.getElementById('selName').value;
+  if(idx===''){alert('請先選擇姓名！');return;}
+  var p=people[idx];
+  if(p.checked){alert(p.name+' 已經簽到過了！');return;}
+  var meal=document.querySelector('input[name="meal"]:checked').value;
+  p.meal=meal;
+  p.checked=true;
+  p.time=new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'});
+  p.date=new Date().toLocaleDateString('zh-TW');
+  document.getElementById('selName').value='';
+  document.getElementById('personInfo').style.display='none';
+  showToast('✅ '+p.name+' 簽到成功！（'+meal+'食）');
+  updateAll();
+}
+
+function showToast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg;t.style.display='block';
+  setTimeout(function(){t.style.display='none';},2500);
+}
+
+function updateAll(){renderList();renderStats();}
+
+function renderList(){
+  var q=(document.getElementById('searchInput')?document.getElementById('searchInput').value:'').toLowerCase();
+  var filtered=people.filter(function(p){
+    if(!q)return true;
+    return (p.name+p.org+p.dept+p.title).toLowerCase().indexOf(q)!==-1;
+  });
+  var done=people.filter(function(p){return p.checked;});
+  var absent=people.filter(function(p){return !p.checked;});
+
+  document.getElementById('listCount').textContent='已簽到 '+done.length+' / '+people.length+' 人';
+
+  // Table
+  var html='<div style="overflow-x:auto"><table><thead><tr><th>#</th><th>姓名</th><th>服務機關</th><th>部門</th><th>職稱</th><th>餐點</th><th>狀態</th><th>時間</th></tr></thead><tbody>';
+  filtered.forEach(function(p,i){
+    var mealBadge=p.meal==='素'?'<span class="badge badge-veg">🥬 素食</span>':'<span class="badge badge-meat">🍖 葷食</span>';
+    var statusBadge=p.checked?'<span class="badge badge-done">✅ 已簽到</span>':'<span class="badge badge-pending">⏳ 未簽到</span>';
+    var timeStr=p.checked?p.time:'-';
+    html+='<tr><td>'+(i+1)+'</td><td style="font-weight:500">'+p.name+'</td><td>'+p.org+'</td><td>'+p.dept+'</td><td>'+p.title+'</td><td>'+mealBadge+'</td><td>'+statusBadge+'</td><td style="font-family:monospace;color:#666">'+timeStr+'</td></tr>';
+  });
+  html+='</tbody></table></div>';
+  document.getElementById('listArea').innerHTML=html;
+
+  // Absent
+  document.getElementById('absentCount').textContent=absent.length+' 人未簽到';
+  if(absent.length===0){
+    document.getElementById('absentArea').innerHTML='<div class="empty-state" style="color:#16a34a;padding:20px"><p style="font-weight:600">🎉 全員到齊！</p></div>';
+  } else {
+    var ah='<div style="display:flex;flex-wrap:wrap;gap:4px">';
+    absent.forEach(function(p){ah+='<span class="absent-item">'+p.name+' ('+p.org+')</span>';});
+    ah+='</div>';
+    document.getElementById('absentArea').innerHTML=ah;
+  }
+
+  // Progress
+  var pct=people.length>0?Math.round(done.length/people.length*100):0;
+  document.getElementById('progressText').textContent=done.length+' / '+people.length+' ('+pct+'%)';
+  document.getElementById('progressFill').style.width=pct+'%';
+}
+
+function renderStats(){
+  var done=people.filter(function(p){return p.checked;});
+  var meat=done.filter(function(p){return p.meal==='葷';}).length;
+  var veg=done.filter(function(p){return p.meal==='素';}).length;
+  var total=done.length;
+
+  document.getElementById('sTotal').textContent=people.length;
+  document.getElementById('sDone').textContent=total;
+  document.getElementById('sMeat').textContent=meat;
+  document.getElementById('sVeg').textContent=veg;
+
+  var mPct=total>0?Math.round(meat/total*100):0;
+  var vPct=total>0?Math.round(veg/total*100):0;
+  document.getElementById('barMeat').style.width=mPct+'%';
+  document.getElementById('barVeg').style.width=vPct+'%';
+  document.getElementById('pctMeat').textContent=mPct+'% ('+meat+'份)';
+  document.getElementById('pctVeg').textContent=vPct+'% ('+veg+'份)';
+
+  // Org stats
+  var orgs={};
+  people.forEach(function(p){
+    if(!orgs[p.org])orgs[p.org]={total:0,done:0};
+    orgs[p.org].total++;
+    if(p.checked)orgs[p.org].done++;
+  });
+  var oh='<table><thead><tr><th>服務機關</th><th>預期人數</th><th>已簽到</th><th>簽到率</th></tr></thead><tbody>';
+  Object.keys(orgs).forEach(function(k){
+    var o=orgs[k];
+    var r=o.total>0?Math.round(o.done/o.total*100):0;
+    oh+='<tr><td style="font-weight:500">'+k+'</td><td style="font-family:monospace">'+o.total+'</td><td style="font-family:monospace">'+o.done+'</td><td style="font-family:monospace">'+r+'%</td></tr>';
+  });
+  oh+='</tbody></table>';
+  document.getElementById('orgStats').innerHTML=oh;
+}
+
+// ===== EXPORT =====
+function dl(fn,csv){
+  var blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fn;a.click();
+  URL.revokeObjectURL(a.href);showToast('✅ 已下載 '+fn);
+}
+
+function expCheckin(){
+  var done=people.filter(function(p){return p.checked;});
+  if(!done.length){alert('目前沒有簽到紀錄！');return;}
+  var r=['序號,姓名,服務機關,部門名稱,職稱,官職等,餐點,簽到日期,簽到時間'];
+  done.forEach(function(p,i){r.push((i+1)+','+p.name+','+p.org+','+p.dept+','+p.title+','+p.rank+','+(p.meal==='素'?'素食':'葷食')+','+p.date+','+p.time);});
+  dl('簽到名單.csv',r.join('\n'));
+}
+
+function expAbsent(){
+  var abs=people.filter(function(p){return !p.checked;});
+  var r=['序號,姓名,服務機關,部門名稱,職稱,官職等,原報名餐點,狀態'];
+  abs.forEach(function(p,i){r.push((i+1)+','+p.name+','+p.org+','+p.dept+','+p.title+','+p.rank+','+(p.meal==='素'?'素食':'葷食')+',未簽到');});
+  r.push('');r.push('未簽到人數,'+abs.length);r.push('預期總人數,'+people.length);
+  dl('未簽到名單.csv',r.join('\n'));
+}
+
+function expStats(){
+  var done=people.filter(function(p){return p.checked;});
+  var meat=done.filter(function(p){return p.meal==='葷';}).length;
+  var veg=done.filter(function(p){return p.meal==='素';}).length;
+  var t=done.length;var mp=t>0?Math.round(meat/t*100):0;var vp=t>0?Math.round(veg/t*100):0;
+  var r=['便當統計報表','','類型,數量,百分比','葷食,'+meat+','+mp+'%','素食,'+veg+','+vp+'%','合計,'+t+',100%'];
+  dl('便當統計.csv',r.join('\n'));
+}
+
+function expFull(){
+  var done=people.filter(function(p){return p.checked;});
+  var abs=people.filter(function(p){return !p.checked;});
+  var meat=done.filter(function(p){return p.meal==='葷';}).length;
+  var veg=done.filter(function(p){return p.meal==='素';}).length;
+  var t=done.length;var mp=t>0?Math.round(meat/t*100):0;var vp=t>0?Math.round(veg/t*100):0;
+  var r=['===== 簽到總報表 =====','匯出時間,'+new Date().toLocaleString('zh-TW'),''];
+  r.push('【一、簽到名單】');
+  r.push('序號,姓名,服務機關,部門名稱,職稱,官職等,餐點,簽到日期,簽到時間');
+  done.forEach(function(p,i){r.push((i+1)+','+p.name+','+p.org+','+p.dept+','+p.title+','+p.rank+','+(p.meal==='素'?'素食':'葷食')+','+p.date+','+p.time);});
+  r.push('');r.push('【二、未簽到名單】');
+  r.push('序號,姓名,服務機關,部門名稱,職稱');
+  abs.forEach(function(p,i){r.push((i+1)+','+p.name+','+p.org+','+p.dept+','+p.title);});
+  r.push('未簽到人數,'+abs.length);
+  r.push('');r.push('【三、便當統計】');
+  r.push('類型,數量,百分比');r.push('葷食,'+meat+','+mp+'%');r.push('素食,'+veg+','+vp+'%');r.push('合計,'+t+',100%');
+  dl('簽到總報表.csv',r.join('\n'));
+}
+
+init();
+</script>
+</body>
+</html>
